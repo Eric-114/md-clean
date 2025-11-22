@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Markdown去格式工具</title>
+</head>
+<body style="font-family: Arial; padding: 20px;">
+  <h2>一键去除 Markdown 格式</h2>
+
+  <textarea id="input" rows="10" style="width:100%" placeholder="粘贴 Markdown 内容"></textarea>
+  <br><br>
+
+  <button onclick="clean()">去除格式</button>
+
+  <br><br>
+  <textarea id="output" rows="10" style="width:100%" placeholder="纯文本结果"></textarea>
+
+  <script>
+    function clean() {
+      let text = document.getElementById("input").value;
+      text = text.replace(/[#>*`_\-]/g, "");
+      text = text.replace(/\[([^\]]+)\]\([^)]+\)/g, "$1");
+      document.getElementById("output").value = text;
+    }
+  </script>
+</body>
+</html>
