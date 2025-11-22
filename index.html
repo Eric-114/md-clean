@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <title>Markdown清理工具｜安全可信的AI文本去格式网站</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body { background: #f4f6f8; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial; padding: 20px; color: #333; }
+    .box { background: #fff; max-width: 900px; margin: 0 auto; padding: 28px 30px; border-radius: 14px; box-shadow: 0 10px 30px rgba(0,0,0,0.06); }
+    h1 { font-size: 22px; text-align: center; margin-bottom: 6px; }
+    .badge { display:inline-block; font-size:12px; color:#fff; background:#2e7d32; padding:6px 10px; border-radius:999px; margin-bottom:10px; }
+    .desc { text-align:center; color:#666; font-size:14px; margin-bottom:18px; }
+    textarea { width:100%; height:180px; border-radius:10px; border:1px solid #e6e9ee; padding:12px; font-size:14px; resize:vertical; box-sizing:border-box; outline:none; background:#fbfcfd; }
+    .row { display:flex; gap:12px; margin-top:12px; }
+    .col { flex:1; }
+    .btns { text-align:center; margin:18px 0; }
+    button { background:#4CAF50; color:#fff; border:none; padding:11px 20px; font-size:15px; border-radius:999px; cursor:pointer; margin:6px; box-shadow: 0 4px 10px rgba(66,133,244,0.08); }
+    button:hover { filter:brightness(.96); }
+    .copy-btn { background:#1E88E5; }
+    .small { font-size:13px; color:#777; margin-top:8px; text-align:center; }
+    .footer { margin-top:18px; font-size:13px; text-align:center; color:#888; line-height:1.6; }
+    .safe { color:#2e7d32; font-weight:700; }
+    @media (max-width:600px) {
+      textarea { height:160px; }
+      .row { flex-direction:column; }
+    }
+  </style>
+</head>
+<body>
+  <div class="box">
+    <div style="text-align:center;">
+    </div>
+    <h1>✅ Markdown一键去AI生成格式为常规格式文本工具</h1>
+    <div class="desc">专业清理 AI 生成的 Markdown 标记，100% 本地处理，安全可信。</div>
+
+    <div class="row">
+      <div class="col">
+        <label style="font-size:13px; color:#555;">原文（粘贴带 Markdown 的内容）</label>
+        <textarea id="input" placeholder="在此粘贴 ChatGPT 或其他 AI 生成的带 Markdown 的文本..."></textarea>
+      </div>
+    </div>
+
+    <div class="btns">
+      <button onclick="cleanText()">一键去除格式</button>
+      <button class="copy-btn" onclick="copyText()">结果一键复制</button>
+      <button style="background:#ffb300;" onclick="clearAll()">清空</button>
+    </div>
+
+    <div class="row" style="margin-top:6px;">
+      <div class="col">
+        <label style="font-size:13px; color:#555;">结果（纯文本）</label>
+        <textarea id="output" placeholder="处理后纯文本将显示在这里"></textarea>
+      </div>
+    </div>
+
+    <div class="small">提示：若结果仍含个别特殊符号，可再点击“一键去除格式”或手动删除。该工具为纯前端实现，安全可信。</div>
+
+    <div class="footer">
+      <div class="safe">🔒 安全承诺：所有内容仅在浏览器本地处理，不上传、不保存、不收集任何数据。</div>
+      <div>适用于：Deepseek / 豆包 / Kimi / 通义千问 / 文心一言 / ChatGPT 等所有AI内容转化 </div>
+      <div>© 2025 Markdown清理工具 · 免费使用</div>
+    </div>
+  </div>
+
+  <script>
+    function cleanText() {
+      let text = document.getElementById("input").value || "";
+
+      // 1) 删除三反引号代码块（包括里面内容）
+      text = text.replace(/```[\s\S]*?```/g, "");
+
+      // 2) 删除行内反引号
+      text = text.replace(/`+/g, "");
+
+      // 3) 删除标题标记 # 1-6 级
+      text = text.replace(/^\s{0,3}#{1,6}\s*/gm, "");
+
+      // 4) 删除图片（保留 alt 可选：这里直接删图片本体）
+      text = text.replace(/!\[.*?\]\([^)]*\)/g, "");
+
+      // 5) 链接 [text](url) -> 保留 text
+      text = text.replace(/\[([^\]]+)\]\([^)]*\)/g, "$1");
+
+      // 6) 删除 blockquote 前缀 >
+      text = text.replace(/^\s*>\s?/gm, "");
+
+      // 7) 删除列表前缀（- * + 数字.）
+      text = text.replace(/^\s*([-*+])\s+/gm, "");
+      text = text.replace(/^\s*\d+\.\s+/gm, "");
+
+      // 8) 删除粗体、斜体、删除线等，保留内部文字
+      // 支持 **bold** , __bold__ , *italic* , _italic_ , ~~strike~~
+      try {
+        text = text.replace(/\*\*(.*?)\*\*/gs, "$1");
+        text = text.replace(/__(.*?)__/gs, "$1");
+        text = text.replace(/\*(.*?)\*/gs, "$1");
+        text = text.replace(/_(.*?)_/gs, "$1");
+        text = text.replace(/~~(.*?)~~/gs, "$1");
+      } catch (e) {
+        // 某些旧浏览器不支持 's' 标志，回退到不使用 s
+        text = text.replace(/\*\*(.*?)\*\*/g, "$1");
+        text = text.replace(/__(.*?)__/g, "$1");
+        text = text.replace(/\*(.*?)\*/g, "$1");
+        text = text.replace(/_(.*?)_/g, "$1");
+        text = text.replace(/~~(.*?)~~/g, "$1");
+      }
+
+      // 9) 删除水平线 --- ___ *** 等
+      text = text.replace(/^[\s]*([-*_]){3,}\s*$/gm, "");
+
+      // 10) 删除多余的方括号或孤立的星号、下划线（最后保险一步）
+     // 只移除成对或孤立的Markdown符号两侧空白规则
+      text = text.replace(/(^|\s)[\*\_]+(\s|$)/g, " ");
+      text = text.replace(/\[|\]/g, "");
+
+
+      // 11) 将多重空行缩减为最多两个
+      text = text.replace(/\n{3,}/g, "\n\n");
+
+      // 12) 修剪首尾空白
+      text = text.trim();
+
+      document.getElementById("output").value = text;
+    }
+
+    function copyText() {
+      const out = document.getElementById("output").value || "";
+      if (!out) { alert("结果为空，请先点击“一键去除格式”。"); return; }
+
+      // 优先使用 navigator.clipboard（更现代/可靠）
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(out).then(() => {
+          alert("✅ 已复制到剪贴板！");
+        }).catch(() => {
+          fallbackCopy(out);
+        });
+      } else {
+        fallbackCopy(out);
+      }
+    }
+
+    function fallbackCopy(text) {
+      const ta = document.createElement("textarea");
+      ta.value = text;
+      document.body.appendChild(ta);
+      ta.select();
+      try {
+        document.execCommand("copy");
+        alert("✅ 已复制到剪贴板！");
+      } catch (e) {
+        alert("复制失败，请手动复制结果。");
+      }
+      document.body.removeChild(ta);
+    }
+
+    function clearAll() {
+      if (confirm("确定要清空输入与输出吗？")) {
+        document.getElementById("input").value = "";
+        document.getElementById("output").value = "";
+      }
+    }
+  </script>
+</body>
+</html>
